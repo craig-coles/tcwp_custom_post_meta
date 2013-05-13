@@ -57,6 +57,15 @@
 						<input class="widefat" type="text" name="<?php echo $this->customPostMetaID;?>" id="<?php echo $this->customPostMetaID;?>" value="<?php echo esc_attr( get_post_meta( $object->ID, $this->customPostMetaID, true ) ); ?>" size="30" />
 					</p>
 				<?php 
+			} else if($this->customPostMetaInputType == "checkbox"){
+				?>
+					<?php wp_nonce_field( basename( __FILE__ ), $this->customPostMetaID.'_nonce' ); ?>
+			
+					<p>
+						<input type="checkbox" name="<?php echo $this->customPostMetaID;?>" id="<?php echo $this->customPostMetaID;?>" <?php echo get_post_meta( $object->ID, $this->customPostMetaID, true ) ? "checked" : "";?>  />
+						<label for="<?php echo $this->customPostMetaID;?>"><?php echo $this->customPostMetaLabel; ?></label>
+					</p>
+				<?php
 			} 
 			
 			
@@ -75,16 +84,23 @@
 			/* Check if the current user has permission to edit the post. */
 			if ( !current_user_can( $post_type->cap->edit_post, $post_id ) )
 				return $post_id;
-		
-			/* Get the posted data and sanitize it for use as an HTML class. */
-			$new_meta_value = ( isset( $_POST[$this->customPostMetaID] ) ? sanitize_html_class( $_POST[$this->customPostMetaID] ) : '' );
-		
+			
+			
+			
+			if($this->customPostMetaInputType == "checkbox"){
+				$new_meta_value = isset( $_POST[$this->customPostMetaID] ) ? 1 : 0;
+			} else {
+				/* Get the posted data and sanitize it */
+				$new_meta_value = ( isset( $_POST[$this->customPostMetaID] ) ? sanitize_html_class( $_POST[$this->customPostMetaID] ) : '' );
+			}
+			
+			
 			/* Get the meta key. */
 			$meta_key = $this->customPostMetaID;
 		
 			/* Get the meta value of the custom field key. */
 			$meta_value = get_post_meta( $post_id, $meta_key, true );
-		
+			
 			/* If a new meta value was added and there was no previous value, add it. */
 			if ( $new_meta_value && '' == $meta_value )
 				add_post_meta( $post_id, $meta_key, $new_meta_value, true );
