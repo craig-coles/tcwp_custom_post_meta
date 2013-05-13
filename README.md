@@ -2,7 +2,7 @@ This is a super simple class for making custom post meta boxes for your wordpres
 So if you just want to get stuff done instead of learning how to install a wp plugin, use the wp plugin etc. 
 and you are familiar with wordpress and PHP oop methods then this class is for you!
 
-*NOTES: currently this only works on text inputs, but I am working on it so that soon it will be all form inputs
+*NOTES: currently this only works on text inputs and checkboxes, but I am working on it so that soon it will be all form inputs
 
 USAGE:
 (this is a class so you need to include it in your page somewhere before you instantiate it)
