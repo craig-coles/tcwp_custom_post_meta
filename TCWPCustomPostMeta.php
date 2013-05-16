@@ -10,6 +10,7 @@
 		private $customPostMetaPriority = "default";
 		private $customPostMetaCallBackArgs = array();
 		private $customPostMetaLabel = "";
+		private $beforeSaveFilter = "sanitize_text_field";
 		
 		public function init(){
 			$this->__construct();
@@ -37,6 +38,7 @@
 				$this->customPostMetaPriority = $params['priority'] ? $params['priority'] : $this->customPostMetaPriority;
 				$this->customPostMetaCallBackArgs = $params['callback_args'] ? $params['callback_args'] : $this->customPostMetaCallBackArgs;
 				$this->customPostMetaLabel = $params['label'] ? $params['label'] : $this->customPostMetaLabel;
+				$this->beforeSaveFilter = $params['before_save_filter'] ? $params['before_save_filter'] : $this->beforeSaveFilter; 
 				return true;
 			}
 			
@@ -72,7 +74,7 @@
 		}
 	
 		/* Save the meta box's post metadata. */
-		function smashing_save_post_class_meta( $post_id, $post ) {
+		function save_custom_meta( $post_id, $post ) {
 			
 			/* Verify the nonce before proceeding. */
 			if ( !isset( $_POST[$this->customPostMetaID.'_nonce'] ) || !wp_verify_nonce( $_POST[$this->customPostMetaID.'_nonce'], basename( __FILE__ ) ) )
@@ -85,13 +87,11 @@
 			if ( !current_user_can( $post_type->cap->edit_post, $post_id ) )
 				return $post_id;
 			
-			
-			
 			if($this->customPostMetaInputType == "checkbox"){
 				$new_meta_value = isset( $_POST[$this->customPostMetaID] ) ? 1 : 0;
 			} else {
 				/* Get the posted data and sanitize it */
-				$new_meta_value = ( isset( $_POST[$this->customPostMetaID] ) ? sanitize_html_class( $_POST[$this->customPostMetaID] ) : '' );
+				$new_meta_value = ( isset( $_POST[$this->customPostMetaID] ) ? call_user_func($this->beforeSaveFilter,$_POST[$this->customPostMetaID]) : '' );
 			}
 			
 			
@@ -129,7 +129,7 @@
 	
 		function tc_post_meta_boxes_setup(){
 			add_action('add_meta_boxes',array($this,'TCWPCustomPostMeta::tc_add_post_meta_boxes'));
-			add_action( 'save_post', array($this,'TCWPCustomPostMeta::smashing_save_post_class_meta'), 10, 2 );
+			add_action( 'save_post', array($this,'TCWPCustomPostMeta::save_custom_meta'), 10, 2 );
 		}
 	
 		
