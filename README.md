@@ -1,11 +1,11 @@
-This is a super simple class for making custom post meta boxes for your wordpress posts, pages or what have you.
-So if you just want to get stuff done instead of learning how to install a wp plugin, use the wp plugin etc. 
-and you are familiar with wordpress and PHP oop methods then this class is for you!
+THIS IS A WORDPRESS custom post meta class.
 
-*NOTES: currently this only works on text inputs and checkboxes, but I am working on it so that soon it will be all form inputs
+*NOTES: currently this class only works with text inputs and checkboxes, but I am working on it so that soon it will be all form inputs
 
 USAGE:
 (this is a class so you need to include it in your page somewhere before you instantiate it)
+
+example (add this code to functions.php)
 
 include('TCWPCustomPostMeta.php');
 
@@ -13,6 +13,7 @@ $params = array(
 		"id" => "awesome_sauce",
 		"title" => "Awesome Sauce",
 		"context" =>"advanced",
+		"before_save_filter" => "sanitize_html_class",
 		"label" =>"add some custom stuff",
 		"priority" => "default",
 		"callback_args"=>array('someCoolStuff'=>"the cool stuff")
@@ -36,3 +37,7 @@ you can map the params back to the wordpress add_meta_box function
 http://codex.wordpress.org/Function_Reference/add_meta_box
 
 happy coding.
+
+*Update*
+
+- added a customizable 'before_save_filter' so you can pass in a function that will receive the post meta value to sanitize before saving
